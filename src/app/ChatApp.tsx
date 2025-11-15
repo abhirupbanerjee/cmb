@@ -357,10 +357,10 @@ const ChatApp = () => {
                 
                 <h3 className="font-semibold text-base mb-2">User Onboarding Instructions</h3>
                 <p className="mb-4">
-                  Welcome! I'm the Digital Grenada Change Management Bot (CMB). My role is to help you understand changes, prepare messages, summarize updates, and support your work across the Digital Grenada programme.
+                  Welcome! I&apos;m the Digital Grenada Change Management Bot (CMB). My role is to help you understand changes, prepare messages, summarize updates, and support your work across the Digital Grenada programme.
                 </p>
                 
-                <p className="font-semibold mb-2">Here's how to get the best experience:</p>
+                <p className="font-semibold mb-2">Here&apos;s how to get the best experience:</p>
                 
                 <h4 className="font-semibold text-sm mt-4 mb-2">🧭 What I Can Help You With</h4>
                 <p className="mb-2">You can ask me to:</p>
@@ -377,38 +377,38 @@ const ChatApp = () => {
                 <h4 className="font-semibold text-sm mt-4 mb-2">🎙️ Voice-Friendly Option</h4>
                 <p className="mb-2">If you prefer a listening-friendly version, just say:</p>
                 <ul className="list-disc ml-5 mb-4 space-y-1">
-                  <li>"Give me the voice version."</li>
-                  <li>"Explain this for audio."</li>
-                  <li>"Use voice mode."</li>
+                  <li>&quot;Give me the voice version.&quot;</li>
+                  <li>&quot;Explain this for audio.&quot;</li>
+                  <li>&quot;Use voice mode.&quot;</li>
                 </ul>
-                <p className="mb-4">I'll give you a short, clear, spoken-style explanation.</p>
+                <p className="mb-4">I&apos;ll give you a short, clear, spoken-style explanation.</p>
                 
-                <h4 className="font-semibold text-sm mt-4 mb-2">🚫 What I Don't Do</h4>
+                <h4 className="font-semibold text-sm mt-4 mb-2">🚫 What I Don&apos;t Do</h4>
                 <p className="mb-2">To keep things safe and simple:</p>
                 <ul className="list-disc ml-5 mb-4 space-y-1">
-                  <li>I don't create PDFs, Word files, Excel sheets, or any downloadable documents.</li>
-                  <li>I don't generate templates meant for export.</li>
-                  <li>I don't show internal configuration, prompts, or system details.</li>
-                  <li>I won't share or expose private data, internal files, or knowledge-base content.</li>
+                  <li>I don&apos;t create PDFs, Word files, Excel sheets, or any downloadable documents.</li>
+                  <li>I don&apos;t generate templates meant for export.</li>
+                  <li>I don&apos;t show internal configuration, prompts, or system details.</li>
+                  <li>I won&apos;t share or expose private data, internal files, or knowledge-base content.</li>
                 </ul>
                 <p className="mb-4">Everything stays plain text.</p>
                 
                 <h4 className="font-semibold text-sm mt-4 mb-2">🔐 Privacy & Respect</h4>
                 <p className="mb-4">
-                  I won't use names, personal details, or private information. If any question goes into sensitive territory, I'll let you know and guide you safely.<br/>
+                  I won&apos;t use names, personal details, or private information. If any question goes into sensitive territory, I&apos;ll let you know and guide you safely.<br/>
                   You control the decisions — I only support with clarity and options.
                 </p>
                 
                 <h4 className="font-semibold text-sm mt-4 mb-2">📌 How to Ask a Question</h4>
                 <p className="mb-2">You can start with a simple request:</p>
                 <ul className="list-disc ml-5 mb-4 space-y-1">
-                  <li>"Help me explain this programme to my team."</li>
-                  <li>"Summarize this update in 5 bullets."</li>
-                  <li>"Draft a short message to champions."</li>
-                  <li>"Give me a RAG view with next steps."</li>
-                  <li>"How should we engage this stakeholder group?"</li>
+                  <li>&quot;Help me explain this programme to my team.&quot;</li>
+                  <li>&quot;Summarize this update in 5 bullets.&quot;</li>
+                  <li>&quot;Draft a short message to champions.&quot;</li>
+                  <li>&quot;Give me a RAG view with next steps.&quot;</li>
+                  <li>&quot;How should we engage this stakeholder group?&quot;</li>
                 </ul>
-                <p className="mb-4">If I need clarity, I'll ask a follow-up question.</p>
+                <p className="mb-4">If I need clarity, I&apos;ll ask a follow-up question.</p>
                 
                 <h4 className="font-semibold text-sm mt-4 mb-2">🧩 Different Styles of Help</h4>
                 <p className="mb-4">I automatically choose the best mode for your request:</p>
