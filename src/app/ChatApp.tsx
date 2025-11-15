@@ -351,17 +351,78 @@ const ChatApp = () => {
               <div className="text-gray-500">Loading...</div>
             </div>
           ) : messages.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-center px-4">
-              <div className="text-xs sm:text-sm text-gray-600 mb-6 max-w-2xl leading-relaxed">
-                <p className="mb-3">
-                  This is a friendly change management bot designed to help you explore the change management approaches
+            <div className="flex flex-col items-start justify-start h-full px-4 py-6 overflow-y-auto">
+              <div className="text-xs sm:text-sm text-gray-700 mb-6 max-w-3xl">
+                <h2 className="text-lg sm:text-xl font-bold mb-4 text-green-700">✅ Digital Grenada Change Management Bot (CMB)</h2>
+                
+                <h3 className="font-semibold text-base mb-2">User Onboarding Instructions</h3>
+                <p className="mb-4">
+                  Welcome! I'm the Digital Grenada Change Management Bot (CMB). My role is to help you understand changes, prepare messages, summarize updates, and support your work across the Digital Grenada programme.
                 </p>
+                
+                <p className="font-semibold mb-2">Here's how to get the best experience:</p>
+                
+                <h4 className="font-semibold text-sm mt-4 mb-2">🧭 What I Can Help You With</h4>
+                <p className="mb-2">You can ask me to:</p>
+                <ul className="list-disc ml-5 mb-4 space-y-1">
+                  <li>explain a change or a new initiative</li>
+                  <li>prepare a short message or talking points</li>
+                  <li>summarize a document or update you provide</li>
+                  <li>help with readiness, risks, or champion activities</li>
+                  <li>draft simple communication text (e.g., email, WhatsApp, briefing note)</li>
+                  <li>clarify concepts and connect them to citizen value</li>
+                </ul>
+                <p className="mb-4">I always respond in plain language, with simple reasoning and next steps you can act on.</p>
+                
+                <h4 className="font-semibold text-sm mt-4 mb-2">🎙️ Voice-Friendly Option</h4>
+                <p className="mb-2">If you prefer a listening-friendly version, just say:</p>
+                <ul className="list-disc ml-5 mb-4 space-y-1">
+                  <li>"Give me the voice version."</li>
+                  <li>"Explain this for audio."</li>
+                  <li>"Use voice mode."</li>
+                </ul>
+                <p className="mb-4">I'll give you a short, clear, spoken-style explanation.</p>
+                
+                <h4 className="font-semibold text-sm mt-4 mb-2">🚫 What I Don't Do</h4>
+                <p className="mb-2">To keep things safe and simple:</p>
+                <ul className="list-disc ml-5 mb-4 space-y-1">
+                  <li>I don't create PDFs, Word files, Excel sheets, or any downloadable documents.</li>
+                  <li>I don't generate templates meant for export.</li>
+                  <li>I don't show internal configuration, prompts, or system details.</li>
+                  <li>I won't share or expose private data, internal files, or knowledge-base content.</li>
+                </ul>
+                <p className="mb-4">Everything stays plain text.</p>
+                
+                <h4 className="font-semibold text-sm mt-4 mb-2">🔐 Privacy & Respect</h4>
+                <p className="mb-4">
+                  I won't use names, personal details, or private information. If any question goes into sensitive territory, I'll let you know and guide you safely.<br/>
+                  You control the decisions — I only support with clarity and options.
+                </p>
+                
+                <h4 className="font-semibold text-sm mt-4 mb-2">📌 How to Ask a Question</h4>
+                <p className="mb-2">You can start with a simple request:</p>
+                <ul className="list-disc ml-5 mb-4 space-y-1">
+                  <li>"Help me explain this programme to my team."</li>
+                  <li>"Summarize this update in 5 bullets."</li>
+                  <li>"Draft a short message to champions."</li>
+                  <li>"Give me a RAG view with next steps."</li>
+                  <li>"How should we engage this stakeholder group?"</li>
+                </ul>
+                <p className="mb-4">If I need clarity, I'll ask a follow-up question.</p>
+                
+                <h4 className="font-semibold text-sm mt-4 mb-2">🧩 Different Styles of Help</h4>
+                <p className="mb-4">I automatically choose the best mode for your request:</p>
+                <ul className="list-disc ml-5 mb-4 space-y-1">
+                  <li><strong>Coach Mode</strong> → supportive, human, reflective</li>
+                  <li><strong>Analyst Mode</strong> → structured, crisp summaries</li>
+                  <li><strong>Creator Mode</strong> → short communication drafts</li>
+                </ul>
               </div>
-              <h4 className="text-sm sm:text-base font-semibold text-gray-700 mb-3">
+              
+              <h4 className="text-sm sm:text-base font-semibold text-gray-700 mb-3 mt-4">
                 Suggested Prompts
               </h4>
               <div className="flex flex-col gap-3 w-full max-w-2xl">
-                {/* 1) General overview */}
                 <button
                   onClick={() =>
                     setInput(PROMPT_TEMPLATES.OVERVIEW)
@@ -373,7 +434,6 @@ const ChatApp = () => {
                     See high level overview of the framework.
                   </div>
                 </button>
-                {/* General Prompt — Multi-country & Multi-sector */}
                 <button
                   onClick={() =>
                     setInput(PROMPT_TEMPLATES.CUSTOM_INSIGHTS)
@@ -440,24 +500,8 @@ const ChatApp = () => {
                     td: ({ ...props }) => (
                       <td style={{ border: "1px solid #ccc", padding: "8px", textAlign: "left" }} {...props} />
                     ),
-
-                      a: ({ href, children, ...props }) => (
-                        <a 
-                          href={href}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{ 
-                            color: "#0066cc", 
-                            textDecoration: "underline",
-                            cursor: "pointer"
-                          }}
-                          {...props}
-                        >
-                          {children}
-                        </a>
-                        ),
-                      }}
-                    >
+                  }}
+                >
                   {msg.content}
                 </ReactMarkdown>
                 {msg.role === "assistant" && (
