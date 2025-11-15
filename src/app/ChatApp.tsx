@@ -324,7 +324,7 @@ const ChatApp = () => {
             className="h-12 w-12 sm:h-16 sm:w-16"
             priority
           />
-          <h2 className="text-sm sm:text-2xl font-bold ml-2">CMB</h2>
+          <h2 className="text-sm sm:text-2xl font-bold ml-2">CM Bot</h2>
         </div>
         {/* Sign out button - Icon on mobile, text on desktop */}
         <button
