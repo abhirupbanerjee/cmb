@@ -440,8 +440,24 @@ const ChatApp = () => {
                     td: ({ ...props }) => (
                       <td style={{ border: "1px solid #ccc", padding: "8px", textAlign: "left" }} {...props} />
                     ),
-                  }}
-                >
+
+                      a: ({ href, children, ...props }) => (
+                        <a 
+                          href={href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ 
+                            color: "#0066cc", 
+                            textDecoration: "underline",
+                            cursor: "pointer"
+                          }}
+                          {...props}
+                        >
+                          {children}
+                        </a>
+                        ),
+                      }}
+                    >
                   {msg.content}
                 </ReactMarkdown>
                 {msg.role === "assistant" && (

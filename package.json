@@ -1,11 +1,11 @@
 {
-  "name": "ai-survey-analyser",
+  "name": "cmbot",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "deploy": "npx wrangler pages deploy out --project-name=AI-survey-analyser"
+    "deploy": "npx wrangler pages deploy out --project-name=cmbot"
   },
   "dependencies": {
     "@vercel/analytics": "^1.5.0",
