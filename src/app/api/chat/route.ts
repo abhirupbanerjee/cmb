@@ -227,7 +227,7 @@ export async function POST(req: NextRequest) {
     // 🚀 ADD EDGE CACHING FOR SUCCESSFUL RESPONSES
     const response = NextResponse.json({ reply, threadId: currentThreadId });
     
-    // Cache successful responses for 2 minutes (Caribbean AI Survey insights don't change frequently)
+    // Cache successful responses for 2 minutes 
     if (status === "completed") {
       response.headers.set('Cache-Control', 's-maxage=120, stale-while-revalidate=300');
     } else {

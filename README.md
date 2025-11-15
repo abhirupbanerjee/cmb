@@ -1,6 +1,6 @@
 # AI Survey Bot
 
-An AI-powered chatbot for analyzing citizen surveys, built with Next.js 15, OpenAI Assistants API, and NextAuth authentication.
+An AI-powered chatbot for change management built with Next.js 15, OpenAI Assistants API, and NextAuth authentication.
 
 ## 🚀 Features
 
@@ -246,4 +246,4 @@ For issues or questions, contact the development team or create a GitHub issue.
 
 ---
 
-**Built for Caribbean AI Initiative**
+**Built for Government of Grenada**

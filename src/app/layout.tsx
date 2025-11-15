@@ -5,8 +5,8 @@ import { Analytics } from "@vercel/analytics/next"; // Add this import
 
 
 export const metadata: Metadata = {
-  title: "Caribbean AI Survey Assistant",
-  description: "AI-powered survey analysis",
+  title: "Change Management Bot",
+  description: "AI-powered change management",
 };
 
 export default function RootLayout({

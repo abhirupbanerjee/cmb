@@ -15,8 +15,8 @@ interface Message {
 
 // Prompt templates for cleaner code and better maintainability
 const PROMPT_TEMPLATES = {
-  OVERVIEW: "Give me an overall view of the Caribbean AI Survey results.",
-  CUSTOM_INSIGHTS: "I want custom insights by country and sector from the Caribbean AI Survey.",
+  OVERVIEW: "Give me an overall view of the Change Management approach",
+  CUSTOM_INSIGHTS: "Explain the Change management approach and framework",
 } as const;
 
 const ChatApp = () => {
@@ -301,7 +301,7 @@ const ChatApp = () => {
 
   const copyChatToClipboard = async () => {
     const chatText = messages
-      .map((msg) => `${msg.timestamp} - ${msg.role === "user" ? "You" : "Caribbean AI Survey Assistant"}:\n${msg.content}`)
+      .map((msg) => `${msg.timestamp} - ${msg.role === "user" ? "You" : "Change Management Bot"}:\n${msg.content}`)
       .join("\n\n");
     try {
       await navigator.clipboard.writeText(chatText);
@@ -324,7 +324,7 @@ const ChatApp = () => {
             className="h-12 w-12 sm:h-16 sm:w-16"
             priority
           />
-          <h2 className="text-sm sm:text-2xl font-bold ml-2">Caribbean AI Survey Assistant</h2>
+          <h2 className="text-sm sm:text-2xl font-bold ml-2">CMB</h2>
         </div>
         {/* Sign out button - Icon on mobile, text on desktop */}
         <button
@@ -354,16 +354,7 @@ const ChatApp = () => {
             <div className="flex flex-col items-center justify-center h-full text-center px-4">
               <div className="text-xs sm:text-sm text-gray-600 mb-6 max-w-2xl leading-relaxed">
                 <p className="mb-3">
-                  This survey captures the voices of Caribbean public and private sector leaders on artificial intelligence. 
-                  Too often, global surveys overlook or dilute our region&apos;s perspectives. 
-                  This initiative aims to change that — ensuring the Caribbean&apos;s priorities, concerns, and aspirations are heard.
-                </p>
-                <p className="mb-3">
-                  The insights here may become the{" "}
-                  <span className="font-semibold">landmark survey on AI for Caribbean leaders</span>.
-                </p>
-                <p className="font-semibold text-gray-700 mb-4">
-                  Explore the findings below:
+                  This is a friendly change management bot designed to help you explore the change management approaches
                 </p>
               </div>
               <h4 className="text-sm sm:text-base font-semibold text-gray-700 mb-3">
@@ -377,9 +368,9 @@ const ChatApp = () => {
                   }
                   className="p-3 sm:p-4 bg-blue-50 hover:bg-blue-100 rounded-lg text-left text-xs sm:text-sm transition-colors"
                 >
-                  <div className="font-semibold mb-1">🌎 What is the overall Caribbean perspective on AI adoption?</div>
+                  <div className="font-semibold mb-1">🌎 What is the change management framework?</div>
                   <div className="text-gray-600 text-xs">
-                    See top priorities, risks, and benefits across countries, industries, and leadership roles.
+                    See high level overview of the framework.
                   </div>
                 </button>
                 {/* General Prompt — Multi-country & Multi-sector */}
@@ -390,9 +381,9 @@ const ChatApp = () => {
                   className="p-3 sm:p-4 bg-blue-50 hover:bg-blue-100 rounded-lg text-left text-xs sm:text-sm transition-colors"
                   aria-label="Multi-country and multi-sector insights"
                 >
-                  <div className="font-semibold mb-1">🌍 Custom Insights by Country & Sector</div>
+                  <div className="font-semibold mb-1">🌍 Help me as a coach to understand and learn the Change management approach</div>
                   <div className="text-gray-600 text-xs">
-                    Select one or more countries and sectors (role optional). Compare against Caribbean peers and EY global benchmarks.
+                    You are a coach and will help the user understand change management approach and framework.
                   </div>
                 </button>
               </div>
@@ -401,7 +392,7 @@ const ChatApp = () => {
           {messages.map((msg, index) => (
             <motion.div key={index}>
               <p className="font-bold mb-1">
-                {msg.role === "user" ? "You" : "Caribbean AI Survey Assistant"}{" "}
+                {msg.role === "user" ? "You" : "CMB"}{" "}
                 {msg.timestamp && (
                   <span className="text-xs text-gray-500">({msg.timestamp})</span>
                 )}
