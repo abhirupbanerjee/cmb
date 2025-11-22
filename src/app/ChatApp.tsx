@@ -6,11 +6,26 @@ import ReactMarkdown from "react-markdown";
 import { motion } from "framer-motion";
 import remarkGfm from "remark-gfm";
 import Image from "next/image";
+import {
+  Mic,
+  MicOff,
+  Send,
+  Volume2,
+  VolumeX,
+  Copy,
+  Trash2,
+  StopCircle,
+  User,
+  Bot,
+  ExternalLink,
+  Check
+} from "lucide-react";
 
 interface Message {
   role: string;
   content: string;
   timestamp?: string;
+  inputMode?: 'text' | 'audio'; // Track how user sent the message
 }
 
 // Prompt templates for cleaner code and better maintainability
@@ -30,6 +45,8 @@ const ChatApp = () => {
   const [voiceEnabled, setVoiceEnabled] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const [inputMode, setInputMode] = useState<'text' | 'audio'>('text'); // Track current input mode
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -90,7 +107,12 @@ const ChatApp = () => {
   // Auto-resize textarea
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(e.target.value);
-    
+
+    // Set input mode to 'text' when user manually types
+    if (e.target.value && inputMode !== 'text') {
+      setInputMode('text');
+    }
+
     // Auto-resize textarea
     const textarea = textareaRef.current;
     if (textarea) {
@@ -150,13 +172,17 @@ const ChatApp = () => {
       });
 
       setInput(res.data.text);
-      
+
+      // Set input mode to 'audio' when transcription completes
+      setInputMode('audio');
+      console.log("🎤 Input mode set to: audio");
+
       // Auto-resize textarea after transcription
       if (textareaRef.current) {
         textareaRef.current.style.height = 'auto';
         textareaRef.current.style.height = Math.min(textareaRef.current.scrollHeight, 120) + 'px';
       }
-      
+
       setLoading(false);
     } catch (err) {
       const error = err as Error;
@@ -228,16 +254,22 @@ const ChatApp = () => {
       role: "user",
       content: input,
       timestamp: new Date().toLocaleString(),
+      inputMode, // Store the input mode with the message
     };
-    
+
     // ✅ Update state AND save immediately (synchronous)
     const newMessages = [...messages, userMessage];
     setMessages(newMessages);
     localStorage.setItem("chatHistory", JSON.stringify(newMessages));
     console.log("💾 Saved user message to localStorage");
-    
+    console.log(`📝 Input mode: ${inputMode}`);
+
     const userInput = input;
+    const currentInputMode = inputMode;
     setInput("");
+
+    // Reset input mode to 'text' after sending
+    setInputMode('text');
 
     // Reset textarea height
     if (textareaRef.current) {
@@ -248,6 +280,7 @@ const ChatApp = () => {
       const res = await axios.post("/api/chat", {
         input: userInput,
         threadId,
+        inputMode: currentInputMode, // Send input mode to API
       });
 
       if (res.data.error) {
@@ -311,6 +344,16 @@ const ChatApp = () => {
     }
   };
 
+  const copyMessageToClipboard = async (content: string, index: number) => {
+    try {
+      await navigator.clipboard.writeText(content);
+      setCopiedIndex(index);
+      setTimeout(() => setCopiedIndex(null), 2000);
+    } catch (err) {
+      console.error("Failed to copy message: ", err);
+    }
+  };
+
   return (
     <div className="h-screen w-full flex flex-col bg-white">
       {/* Header */}
@@ -324,7 +367,7 @@ const ChatApp = () => {
             className="h-12 w-12 sm:h-16 sm:w-16"
             priority
           />
-          <h2 className="text-sm sm:text-2xl font-bold ml-2">CM Bot</h2>
+          <h2 className="text-sm sm:text-2xl font-bold ml-2">Change Navigator</h2>
         </div>
         {/* Sign out button - Icon on mobile, text on desktop */}
         <button
@@ -353,11 +396,11 @@ const ChatApp = () => {
           ) : messages.length === 0 ? (
             <div className="flex flex-col items-start justify-start h-full px-4 py-6 overflow-y-auto">
               <div className="text-xs sm:text-sm text-gray-700 mb-6 max-w-3xl">
-                <h2 className="text-lg sm:text-xl font-bold mb-4 text-green-700">✅ Digital Grenada Change Management Bot (CMB)</h2>
+                <h2 className="text-lg sm:text-xl font-bold mb-4 text-green-700">✅ Change Navigator</h2>
                 
                 <h3 className="font-semibold text-base mb-2">User Onboarding Instructions</h3>
                 <p className="mb-4">
-                  Welcome! I&apos;m the Digital Grenada Change Management Bot (CMB). My role is to help you understand changes, prepare messages, summarize updates, and support your work across the Digital Grenada programme.
+                  Welcome! I&apos;m the Digital Grenada Change Navigator. My role is to help you understand changes, prepare messages, summarize updates, and support your work across the Digital Grenada programme.
                 </p>
                 
                 <p className="font-semibold mb-2">Here&apos;s how to get the best experience:</p>
@@ -450,68 +493,147 @@ const ChatApp = () => {
             </div>
           ) : null}
           {messages.map((msg, index) => (
-            <motion.div key={index}>
-              <p className="font-bold mb-1">
-                {msg.role === "user" ? "You" : "CMB"}{" "}
-                {msg.timestamp && (
-                  <span className="text-xs text-gray-500">({msg.timestamp})</span>
-                )}
-              </p>
-              <div
-                className={`p-3 rounded-md ${
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+              className="group"
+            >
+              <div className="flex items-start gap-3 mb-4">
+                {/* Avatar */}
+                <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
                   msg.role === "user"
-                    ? "bg-gray-200 text-black"
-                    : "bg-white text-black border"
-                }`}
-              >
-                <ReactMarkdown
-                  remarkPlugins={[remarkGfm]}
-                  components={{
-                    h1: ({ ...props }) => (
-                      <h1 style={{ fontFamily: "'Segoe UI', sans-serif", fontSize: "1.75rem", fontWeight: "bold", margin: "1rem 0" }} {...props} />
-                    ),
-                    h2: ({ ...props }) => (
-                      <h2 style={{ fontFamily: "'Segoe UI', sans-serif", fontSize: "1.5rem", fontWeight: "bold", margin: "1rem 0" }} {...props} />
-                    ),
-                    h3: ({ ...props }) => (
-                      <h3 style={{ fontFamily: "'Segoe UI', sans-serif", fontSize: "1.25rem", fontWeight: "bold", margin: "1rem 0" }} {...props} />
-                    ),
-                    code: ({ ...props }) => (
-                      <code style={{ fontFamily: "'Segoe UI', sans-serif", background: "#f3f4f6", padding: "0.2rem 0.4rem", borderRadius: "4px" }} {...props} />
-                    ),
-                    p: ({ ...props }) => (
-                      <p style={{ marginBottom: "0.75rem", lineHeight: "1.6", fontFamily: "'Segoe UI', sans-serif", fontSize: "16px" }} {...props} />
-                    ),
-                    ul: ({ ...props }) => (
-                      <ul style={{ listStyleType: "disc", paddingLeft: "1.5rem", marginBottom: "1rem" }} {...props} />
-                    ),
-                    ol: ({ ...props }) => (
-                      <ol style={{ listStyleType: "decimal", paddingLeft: "1.5rem", marginBottom: "1rem" }} {...props} />
-                    ),
-                    li: ({ ...props }) => (
-                      <li style={{ marginBottom: "0.4rem" }} {...props} />
-                    ),
-                    table: ({ ...props }) => (
-                      <table style={{ borderCollapse: "collapse", width: "100%", marginBottom: "1rem" }} {...props} />
-                    ),
-                    th: ({ ...props }) => (
-                      <th style={{ border: "1px solid #ccc", background: "#f3f4f6", padding: "8px", textAlign: "left" }} {...props} />
-                    ),
-                    td: ({ ...props }) => (
-                      <td style={{ border: "1px solid #ccc", padding: "8px", textAlign: "left" }} {...props} />
-                    ),
-                  }}
-                >
-                  {msg.content}
-                </ReactMarkdown>
-                {msg.role === "assistant" && (
-                  <button
-                    className="mt-2 text-xs text-blue-600 hover:underline"
-                    onClick={() => speakText(msg.content)}
+                    ? "bg-blue-500"
+                    : "bg-gradient-to-br from-green-500 to-emerald-600"
+                }`}>
+                  {msg.role === "user" ? (
+                    <User className="w-5 h-5 text-white" />
+                  ) : (
+                    <Bot className="w-5 h-5 text-white" />
+                  )}
+                </div>
+
+                {/* Message Content */}
+                <div className="flex-grow min-w-0">
+                  {/* Header */}
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-sm text-gray-900">
+                        {msg.role === "user" ? "You" : "Change Navigator"}
+                      </span>
+                      {msg.timestamp && (
+                        <span className="text-xs text-gray-500">{msg.timestamp}</span>
+                      )}
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button
+                        onClick={() => copyMessageToClipboard(msg.content, index)}
+                        className="p-1.5 hover:bg-gray-100 rounded transition-colors"
+                        title="Copy message"
+                      >
+                        {copiedIndex === index ? (
+                          <Check className="w-4 h-4 text-green-600" />
+                        ) : (
+                          <Copy className="w-4 h-4 text-gray-600" />
+                        )}
+                      </button>
+                      {msg.role === "assistant" && (
+                        <button
+                          onClick={() => speakText(msg.content)}
+                          className="p-1.5 hover:bg-gray-100 rounded transition-colors"
+                          title="Play audio"
+                        >
+                          <Volume2 className="w-4 h-4 text-gray-600" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Message Bubble */}
+                  <div
+                    className={`p-4 rounded-lg ${
+                      msg.role === "user"
+                        ? "bg-blue-50 border border-blue-100"
+                        : "bg-white border border-gray-200 shadow-sm"
+                    }`}
                   >
-                    🔊 Play Audio
-                  </button>
-                )}
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      components={{
+                        h1: ({ ...props }) => (
+                          <h1 className="text-2xl font-bold mb-3 mt-4 first:mt-0" {...props} />
+                        ),
+                        h2: ({ ...props }) => (
+                          <h2 className="text-xl font-bold mb-3 mt-3 first:mt-0" {...props} />
+                        ),
+                        h3: ({ ...props }) => (
+                          <h3 className="text-lg font-semibold mb-2 mt-3 first:mt-0" {...props} />
+                        ),
+                        h4: ({ ...props }) => (
+                          <h4 className="text-base font-semibold mb-2 mt-2 first:mt-0" {...props} />
+                        ),
+                        code: ({ className, children, ...props }) => {
+                          const isInline = !className;
+                          return isInline ? (
+                            <code className="bg-gray-100 text-red-600 px-1.5 py-0.5 rounded text-sm font-mono" {...props}>
+                              {children}
+                            </code>
+                          ) : (
+                            <code className="block bg-gray-900 text-gray-100 p-3 rounded-lg overflow-x-auto text-sm font-mono my-2" {...props}>
+                              {children}
+                            </code>
+                          );
+                        },
+                        p: ({ ...props }) => (
+                          <p className="mb-3 leading-relaxed text-gray-800 last:mb-0" {...props} />
+                        ),
+                        ul: ({ ...props }) => (
+                          <ul className="list-disc pl-6 mb-3 space-y-1" {...props} />
+                        ),
+                        ol: ({ ...props }) => (
+                          <ol className="list-decimal pl-6 mb-3 space-y-1" {...props} />
+                        ),
+                        li: ({ ...props }) => (
+                          <li className="text-gray-800 leading-relaxed" {...props} />
+                        ),
+                        a: ({ href, children, ...props }) => (
+                          <a
+                            href={href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 hover:text-blue-800 underline inline-flex items-center gap-1 group/link"
+                            {...props}
+                          >
+                            {children}
+                            <ExternalLink className="w-3 h-3 opacity-0 group-hover/link:opacity-100 transition-opacity" />
+                          </a>
+                        ),
+                        blockquote: ({ ...props }) => (
+                          <blockquote className="border-l-4 border-gray-300 pl-4 py-2 my-3 italic text-gray-700 bg-gray-50 rounded-r" {...props} />
+                        ),
+                        table: ({ ...props }) => (
+                          <div className="overflow-x-auto my-3">
+                            <table className="min-w-full border-collapse border border-gray-300" {...props} />
+                          </div>
+                        ),
+                        th: ({ ...props }) => (
+                          <th className="border border-gray-300 bg-gray-100 px-4 py-2 text-left font-semibold" {...props} />
+                        ),
+                        td: ({ ...props }) => (
+                          <td className="border border-gray-300 px-4 py-2" {...props} />
+                        ),
+                        hr: ({ ...props }) => (
+                          <hr className="my-4 border-gray-300" {...props} />
+                        ),
+                      }}
+                    >
+                      {msg.content}
+                    </ReactMarkdown>
+                  </div>
+                </div>
               </div>
             </motion.div>
           ))}
@@ -527,10 +649,11 @@ const ChatApp = () => {
       {isSpeaking && (
         <div className="w-full max-w-4xl mx-auto px-4">
           <button
-            className="w-full bg-red-500 hover:bg-red-600 text-white p-2 rounded mb-2"
+            className="w-full bg-red-500 hover:bg-red-600 text-white p-3 rounded-lg flex items-center justify-center gap-2 font-medium transition-colors mb-2"
             onClick={stopSpeaking}
           >
-            ⏹ Stop Speaking
+            <StopCircle className="w-5 h-5" />
+            Stop Speaking
           </button>
         </div>
       )}
@@ -556,50 +679,71 @@ const ChatApp = () => {
           />
           <button
             className={`p-3 rounded-full transition-colors ${
-              isRecording 
-                ? "bg-red-500 hover:bg-red-600 text-white" 
+              isRecording
+                ? "bg-red-500 hover:bg-red-600 text-white"
                 : "bg-gray-100 hover:bg-gray-200 text-gray-700"
             }`}
             onClick={isRecording ? stopRecording : startRecording}
             disabled={loading}
             title={isRecording ? "Stop recording" : "Start recording"}
           >
-            {isRecording ? "⏹" : "🎤"}
+            {isRecording ? (
+              <MicOff className="w-5 h-5" />
+            ) : (
+              <Mic className="w-5 h-5" />
+            )}
           </button>
           <button
-            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-medium transition-colors"
+            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={sendMessage}
             disabled={loading}
             title="Send message (Enter)"
           >
-            {loading ? "..." : "➤"}
+            {loading ? (
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+              </div>
+            ) : (
+              <Send className="w-5 h-5" />
+            )}
           </button>
         </div>
 
         {/* Action Buttons Row */}
         <div className="flex gap-2">
           <button
-            className={`flex-1 p-3 rounded-lg transition-all text-sm sm:text-base ${
-              voiceEnabled 
-                ? "bg-white border-2 border-green-500 text-green-600 font-medium" 
+            className={`flex-1 p-3 rounded-lg transition-all flex items-center justify-center gap-2 ${
+              voiceEnabled
+                ? "bg-green-50 border-2 border-green-500 text-green-600 font-medium"
                 : "bg-gray-100 hover:bg-gray-200 text-gray-600"
             }`}
             onClick={() => setVoiceEnabled(!voiceEnabled)}
             title="Toggle auto-play voice responses"
           >
-            <span className="hidden sm:inline">{voiceEnabled ? "🔊 Voice" : "🔇 Voice"}</span>
-            <span className="sm:hidden text-xl">{voiceEnabled ? "🔊" : "🔇"}</span>
+            {voiceEnabled ? (
+              <>
+                <Volume2 className="w-5 h-5" />
+                <span className="hidden sm:inline">Voice On</span>
+              </>
+            ) : (
+              <>
+                <VolumeX className="w-5 h-5" />
+                <span className="hidden sm:inline">Voice Off</span>
+              </>
+            )}
           </button>
           <button
-            className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 p-3 rounded-lg transition-colors text-sm sm:text-base"
+            className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 p-3 rounded-lg transition-colors flex items-center justify-center gap-2"
             onClick={copyChatToClipboard}
             title="Copy chat to clipboard"
           >
-            <span className="hidden sm:inline">📋 Copy</span>
-            <span className="sm:hidden text-xl">📋</span>
+            <Copy className="w-5 h-5" />
+            <span className="hidden sm:inline">Copy</span>
           </button>
           <button
-            className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 p-3 rounded-lg transition-colors text-sm sm:text-base"
+            className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 p-3 rounded-lg transition-colors flex items-center justify-center gap-2"
             onClick={() => {
               setMessages([]);
               setThreadId(null);
@@ -609,8 +753,8 @@ const ChatApp = () => {
             }}
             title="Clear chat history"
           >
-            <span className="hidden sm:inline">🗑️ Clear</span>
-            <span className="sm:hidden text-xl">🗑️</span>
+            <Trash2 className="w-5 h-5" />
+            <span className="hidden sm:inline">Clear</span>
           </button>
         </div>
       </div>

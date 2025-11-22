@@ -17,7 +17,7 @@ interface SearchArgs {
 
 export async function POST(req: NextRequest) {
   try {
-    const { input, threadId } = await req.json();
+    const { input, threadId, inputMode = 'text' } = await req.json();
 
     const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
     const ASSISTANT_ID = process.env.OPENAI_ASSISTANT_ID;
@@ -50,10 +50,32 @@ export async function POST(req: NextRequest) {
       console.log(`♻️ Using existing thread: ${currentThreadId}`);
     }
 
+    // Prepare message content with modality-specific instructions
+    let messageContent = input;
+
+    if (inputMode === 'audio') {
+      // Audio mode: Request concise, listening-friendly response
+      messageContent = `[AUDIO MODE - User is listening via speech-to-text]
+
+IMPORTANT: Please provide a concise, conversational response optimized for listening:
+- Use 2-3 short, clear paragraphs maximum
+- Avoid tables, bullet points, numbered lists, or complex formatting
+- Use natural, spoken-style language as if explaining to someone face-to-face
+- Focus on the key points in a flowing narrative style
+- Keep sentences shorter and easier to follow when read aloud
+- NO file reference citations like [1:filename.pdf] - instead mention documents naturally in sentences if needed (e.g., "The Change Champion Playbook has more on that")
+
+User's question: ${input}`;
+
+      console.log(`🎤 Audio mode activated - using listening-optimized instructions`);
+    } else {
+      console.log(`⌨️ Text mode - using standard detailed response format`);
+    }
+
     // Add user message
     await axios.post(
       `https://api.openai.com/v1/threads/${currentThreadId}/messages`,
-      { role: "user", content: input },
+      { role: "user", content: messageContent },
       { headers }
     );
     console.log(`💬 User message added to thread`);

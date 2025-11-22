@@ -1,249 +1,447 @@
-# AI Survey Bot
+# Change Navigator Bot (CMBot)
 
-An AI-powered chatbot for change management built with Next.js 15, OpenAI Assistants API, and NextAuth authentication.
+An AI-powered chatbot for change management support built with Next.js 15, OpenAI Assistants API, and NextAuth authentication. Designed to help public officers, change champions, and staff understand the Digital Grenada programme.
 
 ## 🚀 Features
 
 - **OpenAI Assistant Integration**: Uses OpenAI's Assistants API with thread-based conversations
-- **Secure Authentication**: Google OAuth (Microsoft Azure AD ready)
-- **Email Whitelist**: Controlled access via allowed email list
-- **Persistent Chat History**: LocalStorage-based chat retention
-- **Markdown Support**: Rich text formatting with tables, lists, and code blocks
-- **Responsive Design**: Mobile-friendly interface with Tailwind CSS
-- **speech to text and text to speech**: allows voice based chat and read puts through Whisper
+- **Secure Authentication**: Google OAuth with email whitelist access control
+- **Persistent Chat History**: LocalStorage-based chat retention across sessions
+- **Rich Markdown Support**: Tables, lists, code blocks, links, and blockquotes
+- **Voice Capabilities**:
+  - Speech-to-text input via OpenAI Whisper
+  - Text-to-speech playback for assistant responses
+- **Modern UI/UX**:
+  - Professional icons via Lucide React
+  - Responsive design with Tailwind CSS 4
+  - Smooth animations with Framer Motion
+  - Avatar-based message bubbles
+  - Hover actions (copy, play audio)
+- **Mobile-Friendly**: Optimized interface for phones and tablets
 
 ## 📋 Prerequisites
 
 - Node.js 18.18.0 or higher
 - OpenAI API key and Assistant ID
-- Google OAuth credentials (or Microsoft Azure AD)
+- Google OAuth credentials
 
-## 🧰 Tech stack
+## 🧰 Tech Stack
 
-- Next.js 15 (App Router) — server + client rendering for the web UI
-- TypeScript — static typing across the app
-- React — UI layer (built with Next.js)
-- Tailwind CSS — utility-first styling
-- OpenAI Assistants API — conversational assistant & threading
-- OpenAI Embeddings / Whisper (optional) — text embeddings and speech features
-- NextAuth.js — authentication (Google OAuth; Microsoft Azure AD optional)
-- Node.js 18+ — recommended runtime
-- Framer Motion — UI animations
-- react-markdown + remark-gfm — render assistant responses in Markdown
-- dotenv — local environment config for dev
-- (Dev) ESLint, Prettier — linting & formatting
-- Optional (if you add a local knowledge base): PostgreSQL + pgvector for vector storage and retrieval
+### Core Framework
+- **Next.js 15** (App Router) — React framework with server + client rendering
+- **TypeScript** — Type safety across the application
+- **React 19** — UI library
+
+### Styling & UI
+- **Tailwind CSS 4** — Utility-first CSS framework
+- **Framer Motion** — Smooth animations and transitions
+- **Lucide React** — Modern SVG icon library
+
+### AI & Authentication
+- **OpenAI Assistants API** — Conversational AI with threading
+- **OpenAI Whisper** — Speech-to-text transcription
+- **NextAuth.js** — Authentication (Google OAuth)
+
+### Content Rendering
+- **react-markdown** — Render assistant responses in Markdown
+- **remark-gfm** — GitHub Flavored Markdown support
+
+### Additional Libraries
+- **Axios** — HTTP client for API requests
+- **date-fns** — Date formatting utilities
+
+### Development Tools
+- **ESLint** — Code linting
+- **TypeScript 5** — Static type checking
 
 ## 🛠️ Installation
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/abhirupbanerjee/ai-survey-analyzer.git
-   cd ai-survey-analyser
-   ```
+### 1. Clone the Repository
+```bash
+git clone https://github.com/yourusername/change-navigator-bot.git
+cd change-navigator-bot
+```
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
+### 2. Install Dependencies
+```bash
+npm install
+```
 
-3. **Set up environment variables**
-   Create a `.env.local` file in the root directory:
-   ```env
-   # OpenAI Configuration
-   OPENAI_API_KEY=sk-your-openai-api-key
-   OPENAI_ASSISTANT_ID=asst_your-assistant-id
-   OPENAI_ORGANIZATION=org-your-org-id  # Optional
-   
-   # NextAuth Configuration
-   NEXTAUTH_URL=http://localhost:3000
-   NEXTAUTH_SECRET=your-random-secret-string  # Generate: openssl rand -base64 32
-   
-   # Google OAuth
-   GOOGLE_CLIENT_ID=your-google-client-id
-   GOOGLE_CLIENT_SECRET=your-google-client-secret
-   
-   # Microsoft Azure AD (Optional)
-   # AZURE_AD_CLIENT_ID=your-azure-client-id
-   # AZURE_AD_CLIENT_SECRET=your-azure-client-secret
-   # AZURE_AD_TENANT_ID=your-azure-tenant-id
-   ```
+### 3. Set Up Environment Variables
 
-4. **Configure allowed emails**
-   Edit `src/app/api/auth/[...nextauth]/route.ts`:
-   ```typescript
-   const ALLOWED_EMAILS = [
-     "your-email@gov.gd",
-     "team-member@gov.gd",
-   ];
-   ```
+Create a `.env.local` file in the root directory:
 
-## 🏃 Run Commands
+```env
+# OpenAI Configuration
+OPENAI_API_KEY=sk-your-openai-api-key
+OPENAI_ASSISTANT_ID=asst_your-assistant-id
 
-- **Development Server**
-  ```bash
-  npm run dev
-  ```
-  Open [http://localhost:3000](http://localhost:3000)
+# NextAuth Configuration
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=your-random-secret-string  # Generate: openssl rand -base64 32
 
-- **Production Build**
-  ```bash
-  npm run build
-  ```
+# Google OAuth
+GOOGLE_CLIENT_ID=your-google-client-id.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+```
 
-- **Deploy to Cloudflare Pages**
-  ```bash
-  npm run deploy
-  ```
+**Generate a secure NextAuth secret:**
+```bash
+openssl rand -base64 32
+```
+
+### 4. Configure Allowed Emails
+
+Edit the allowed emails list in `src/app/api/auth/[...nextauth]/route.ts`:
+
+```typescript
+const ALLOWED_EMAILS = [
+  "your-email@gov.gd",
+  "colleague@gov.gd",
+  // Add more authorized emails
+];
+```
+
+## 🏃 Development Commands
+
+### Start Development Server
+```bash
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+### Build for Production
+```bash
+npm run build
+```
+
+### Deploy to Cloudflare Pages
+```bash
+npm run deploy
+```
 
 ## 🔐 Authentication Setup
 
-### Google OAuth
+### Google OAuth Configuration
 
-1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Create a new project or select existing
-3. Enable Google+ API
-4. Create OAuth 2.0 credentials
-5. Add authorized redirect URIs:
-   - `http://{domains name}/api/auth/callback/google` (dev)
-   - `https://yourdomain.com/api/auth/callback/google` (prod)
-6. Copy Client ID and Client Secret to `.env.local`
+1. **Go to Google Cloud Console**
+   - Visit [Google Cloud Console](https://console.cloud.google.com/)
+   - Create a new project or select an existing one
 
-### Microsoft Azure AD (Optional)
+2. **Enable Required APIs**
+   - Navigate to "APIs & Services" → "Library"
+   - Search for and enable "Google+ API"
 
-1. Register app in [Azure Portal](https://portal.azure.com/)
-2. Navigate to **Azure Active Directory** → **App registrations**
-3. Create new registration:
-   - Name: "app name"
-   - Supported accounts: Single tenant
-   - Redirect URI: `https://yourdomain.com/api/auth/callback/azure-ad`
-4. Copy Application (client) ID and Directory (tenant) ID
-5. Create client secret under **Certificates & secrets**
-6. Uncomment Microsoft provider in `src/app/api/auth/[...nextauth]/route.ts`
-7. Add credentials to environment variables
+3. **Create OAuth 2.0 Credentials**
+   - Go to "APIs & Services" → "Credentials"
+   - Click "Create Credentials" → "OAuth 2.0 Client ID"
+   - Application type: "Web application"
+   - Name: "Change Navigator Bot"
+
+4. **Configure Authorized Redirect URIs**
+   Add these URIs:
+   - Development: `http://localhost:3000/api/auth/callback/google`
+   - Production: `https://yourdomain.com/api/auth/callback/google`
+
+5. **Copy Credentials**
+   - Copy the Client ID and Client Secret
+   - Add them to your `.env.local` file
+
+## 🤖 OpenAI Assistant Setup
+
+### 1. Create an Assistant
+
+1. Go to [OpenAI Platform](https://platform.openai.com/assistants)
+2. Click "Create Assistant"
+3. Configure the assistant:
+   - **Name**: Change Navigator
+   - **Model**: gpt-4-turbo or gpt-4
+   - **Instructions**: Use your improved system prompt (see [docs/improved-system-prompt.md](docs/improved-system-prompt.md))
+
+### 2. Add Knowledge Base (Optional)
+
+Upload relevant documents:
+- Change management frameworks
+- Digital Grenada programme documentation
+- FAQ documents
+- Policy guidelines
+
+### 3. Configure Tools
+
+Enable:
+- **Code Interpreter** (if needed for data analysis)
+- **File Search** (for knowledge retrieval)
+
+### 4. Copy Assistant ID
+
+- Copy the Assistant ID (starts with `asst_`)
+- Add to `OPENAI_ASSISTANT_ID` in `.env.local`
 
 ## 📁 Project Structure
 
 ```
+change-navigator-bot/
 ├── src/
-│ ├── app/
-│ │ ├── api/
-│ │ │ ├── auth/
-│ │ │ │ └── [...nextauth]/route.ts # NextAuth providers & allowed emails
-│ │ │ ├── chat/route.ts # Client -> server chat endpoint (threads)
-│ │ │ └── assistant/ # handlers for assistant tool calls (if present)
-│ │ ├── login/
-│ │ │ └── page.tsx # Login page (remember-me, form)
-│ │ ├── page.tsx # Main Chat / Auth-gated page
-│ │ ├── ChatApp.tsx # Chat UI components and state
-│ │ └── providers.tsx # SessionProvider / context
-│ ├── lib/ # (recommended) shared helpers
-│ │ ├── openai.ts # OpenAI client wrapper (optional)
-│ │ ├── embeddings.ts # embedding helpers (optional)
-│ │ └── vectorstore.ts # pgvector or other vectorstore helpers (optional)
-│ └── components/ # UI components (messages, controls, modals)
-├── public/ # static assets (icons, images)
-│ └── icon.png
-├── scripts/ # optional scripts (init_db.sql, ingest, etc.)
-├── .env.example # example environment variables
-├── wrangler.toml # Cloudflare Pages / Workers config (if used)
-├── package.json
-└── README.md
-
-
-
-Key files (what they do and where to edit)
-- src/app/api/auth/[...nextauth]/route.ts
-  - Configure NextAuth providers (Google and optional Azure AD).
-  - Where to set/validate the ALLOWED_EMAILS whitelist.
-- src/app/api/chat/route.ts
-  - Primary server endpoint used by the front-end to create threads and request assistant runs.
-- src/app/api/assistant/* (tool-handler and related files)
-  - Where assistant tool calls are handled (e.g., retrieval from knowledge base). If you add a local vectorstore, update these handlers to query Postgres/pgvector.
-- src/app/page.tsx and src/app/login/page.tsx
-  - Frontend pages — login, chat UI, and session handling.
-- src/lib (recommended)
-  - Add helpers here for OpenAI API usage, embeddings batching, chunking logic, token counting, and DB access (Postgres + pgvector) if you introduce a local KB.
-- scripts/init_db.sql (recommended if using a local vector DB)
-  - SQL to create vector extension and documents table (pgvector setup).
-
-Environment variables (put these in .env.local or in your deployment settings)
-- OPENAI_API_KEY
-- OPENAI_ASSISTANT_ID
-- OPENAI_ORGANIZATION (optional)
-- NEXTAUTH_URL
-- NEXTAUTH_SECRET
-- GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET
-- (Optional for local KB) DATABASE_URL, EMBEDDING_MODEL, EMBEDDING_DIM
-
-Notes & recommendations
-- The repository already uses OpenAI Assistants + thread flow. For adding a local knowledge base, create src/lib/vectorstore.ts and update the assistant tool handler to query your Postgres/pgvector store and pass retrieved chunks as context.
-- Keep secret keys out of the repository. Use .env.example to document names only.
-- Add a simple scripts/ or src/cli/ folder for ingestion tooling (read files, chunk, embed, upsert). That keeps ingestion logic separate from runtime endpoints.
-
----
-
+│   ├── app/
+│   │   ├── api/
+│   │   │   ├── auth/
+│   │   │   │   └── [...nextauth]/
+│   │   │   │       └── route.ts      # NextAuth config & email whitelist
+│   │   │   ├── chat/
+│   │   │   │   └── route.ts          # Main chat endpoint (thread management)
+│   │   │   ├── transcribe/
+│   │   │   │   └── route.ts          # Whisper speech-to-text
+│   │   │   └── search/
+│   │   │       └── route.ts          # Optional search endpoint
+│   │   ├── ChatApp.tsx               # Main chat UI component
+│   │   ├── page.tsx                  # Home page (auth-gated)
+│   │   ├── layout.tsx                # Root layout
+│   │   ├── providers.tsx             # Session provider wrapper
+│   │   └── globals.css               # Global styles
+│   └── middleware.ts                 # Route protection (if needed)
+├── public/
+│   └── icon.png                      # App icon/logo
+├── docs/
+│   └── improved-system-prompt.md     # Assistant system prompt
+├── .env.local                        # Environment variables (DO NOT COMMIT)
+├── .env.example                      # Example env variables
+├── .gitignore                        # Git ignore file
+├── package.json                      # Dependencies
+├── tsconfig.json                     # TypeScript config
+├── tailwind.config.ts                # Tailwind config
+├── next.config.ts                    # Next.js config
+└── README.md                         # This file
 ```
 
-## 🔧 Configuration
+## 🔧 Key Files Explained
 
-### OpenAI Assistant Setup
+### Authentication & Security
+- **`src/app/api/auth/[...nextauth]/route.ts`**
+  - NextAuth configuration
+  - Google OAuth provider setup
+  - Email whitelist validation
+  - Session management
 
-1. Create an Assistant at [OpenAI Platform](https://platform.openai.com/assistants)
-2. Configure instructions for survey analysis
-3. Add knowledge files (PDFs, documents)
-4. Copy Assistant ID to `OPENAI_ASSISTANT_ID`
+### Chat Functionality
+- **`src/app/api/chat/route.ts`**
+  - Creates and manages OpenAI threads
+  - Handles message submission
+  - Retrieves assistant responses
+  - Error handling
 
-### Email Whitelist
+### Voice Features
+- **`src/app/api/transcribe/route.ts`**
+  - Handles audio file upload
+  - Calls OpenAI Whisper API
+  - Returns transcribed text
 
-Only emails in `ALLOWED_EMAILS` array can access the app. Update this list in:
-```typescript
-// src/app/api/auth/[...nextauth]/route.ts
-const ALLOWED_EMAILS = [
-  "approved@email.com",
-];
-```
+### UI Components
+- **`src/app/ChatApp.tsx`**
+  - Main chat interface
+  - Message rendering with Markdown
+  - Voice input/output controls
+  - LocalStorage persistence
+  - Copy/paste functionality
+
+### Frontend Pages
+- **`src/app/page.tsx`**
+  - Main entry point
+  - Authentication check
+  - Renders ChatApp when authenticated
+
+## 🎨 UI Features
+
+### Message Display
+- **User Messages**: Blue background with user icon avatar
+- **Assistant Messages**: White background with bot icon avatar
+- **Timestamps**: Shown for all messages
+- **Hover Actions**:
+  - Copy message button
+  - Play audio button (assistant messages only)
+
+### Markdown Rendering
+Supports:
+- Headers (H1-H4)
+- Lists (ordered and unordered)
+- Tables with responsive overflow
+- Code blocks (inline and block)
+- Links with external link icons
+- Blockquotes
+- Horizontal rules
+
+### Controls
+- **Voice Input**: Microphone button for speech-to-text
+- **Voice Output**: Toggle auto-play of assistant responses
+- **Copy Chat**: Copy entire conversation to clipboard
+- **Clear Chat**: Reset conversation and localStorage
 
 ## 📦 Deployment
 
 ### Vercel (Recommended)
 
-1. Push code to GitHub
-2. Import project in [Vercel](https://vercel.com)
-3. Add environment variables in project settings
-4. Deploy
+1. **Push to GitHub**
+   ```bash
+   git push origin main
+   ```
 
+2. **Import in Vercel**
+   - Go to [Vercel](https://vercel.com)
+   - Click "New Project"
+   - Import your GitHub repository
 
-```
+3. **Configure Environment Variables**
+   Add all variables from `.env.local` to Vercel project settings
 
-Ensure `wrangler.toml` is configured correctly.
+4. **Deploy**
+   - Vercel will automatically build and deploy
+   - Update Google OAuth redirect URI to production URL
 
-## 🚨 Important Notes
+### Cloudflare Pages
 
-- **Remove demo email**: Delete demo emails from `ALLOWED_EMAILS` before production
-- **LocalStorage limitations**: Chat history stored client-side only (cleared on cache wipe)
-- **API costs**: OpenAI Assistants API charges per usage
-- **Thread management**: Each user session maintains separate conversation thread
+1. **Build the project**
+   ```bash
+   npm run build
+   ```
 
-## 🛡️ Security
+2. **Deploy using Wrangler**
+   ```bash
+   npm run deploy
+   ```
 
-- Email-based access control
-- Server-side API key management
-- NextAuth session encryption
-- No client-side API key exposure
+3. **Configure Environment Variables**
+   - Add environment variables in Cloudflare Pages dashboard
+   - Update OAuth redirect URIs
+
+## 🔒 Security Best Practices
+
+### Environment Variables
+- ✅ Never commit `.env.local` to version control
+- ✅ Use `.env.example` to document required variables
+- ✅ Rotate secrets regularly
+- ✅ Use different API keys for dev and production
+
+### Access Control
+- ✅ Maintain strict email whitelist
+- ✅ Remove demo/test emails before production
+- ✅ Regular access audits
+- ✅ Implement session timeouts via NextAuth config
+
+### API Security
+- ✅ All API keys server-side only
+- ✅ No client-side exposure of secrets
+- ✅ Rate limiting on endpoints (implement if needed)
+- ✅ Input validation on all API routes
+
+## 🚨 Important Considerations
+
+### LocalStorage Limitations
+- Chat history stored **client-side only**
+- Data cleared when:
+  - Browser cache is cleared
+  - User clicks "Clear Chat"
+  - Different browser/device is used
+- **For production**: Consider implementing server-side chat history storage
+
+### API Costs
+- OpenAI Assistants API charges per:
+  - Messages sent
+  - Thread operations
+  - File storage (knowledge base)
+- Monitor usage in OpenAI dashboard
+- Set usage limits to prevent unexpected charges
+
+### Thread Management
+- Each user session maintains a separate thread
+- Threads persist in LocalStorage
+- New thread created if localStorage is cleared
+- Consider implementing thread cleanup/archival
+
+### Voice Features
+- Whisper API costs apply per audio minute
+- Text-to-speech uses browser's built-in capabilities (free)
+- Microphone permissions required for voice input
+
+## 🛠️ Troubleshooting
+
+### Authentication Issues
+**Problem**: "Sign in failed" or "Access Denied"
+- ✅ Check email is in `ALLOWED_EMAILS` array
+- ✅ Verify Google OAuth credentials
+- ✅ Confirm redirect URIs match exactly
+- ✅ Check `NEXTAUTH_URL` is correct
+
+### Chat Not Working
+**Problem**: Messages not sending or receiving
+- ✅ Verify `OPENAI_API_KEY` is valid
+- ✅ Check `OPENAI_ASSISTANT_ID` exists
+- ✅ Review browser console for errors
+- ✅ Check OpenAI API status
+
+### Voice Features Not Working
+**Problem**: Microphone or audio playback issues
+- ✅ Grant microphone permissions
+- ✅ Check browser compatibility (Chrome/Edge recommended)
+- ✅ Verify Whisper API is enabled
+- ✅ Check audio file size limits
+
+## 📊 Monitoring & Maintenance
+
+### Regular Tasks
+- Monitor OpenAI API usage and costs
+- Review authentication logs
+- Update allowed email list as needed
+- Keep dependencies updated
+- Review and rotate API keys quarterly
+
+### Recommended Monitoring
+- Set up error tracking (e.g., Sentry)
+- Monitor API response times
+- Track user authentication patterns
+- Log failed authentication attempts
+
+## 🔄 Future Enhancements
+
+### Potential Improvements
+- [ ] Server-side chat history storage
+- [ ] Export chat transcripts to PDF/Word
+- [ ] Multi-language support
+- [ ] Admin dashboard for user management
+- [ ] Analytics and usage reporting
+- [ ] Enhanced knowledge base management
+- [ ] Real-time collaboration features
+- [ ] Mobile app (React Native)
 
 ## 📄 License
 
-MIT License - See [LICENSE](LICENSE) file
+MIT License - See [LICENSE](LICENSE) file for details.
 
 ## 🤝 Contributing
 
-Pull requests welcome! For major changes, open an issue first.
+Contributions welcome! Please:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## 📧 Support
 
-For issues or questions, contact the development team or create a GitHub issue.
+For issues, questions, or feature requests:
+- Create a [GitHub Issue](https://github.com/yourusername/change-navigator-bot/issues)
+- Contact the development team
+- Review existing documentation
+
+## 🙏 Acknowledgments
+
+- Built for the Government of Grenada
+- Digital Grenada Programme
+- OpenAI for Assistants API
+- Next.js team for the framework
+- All contributors and users
 
 ---
 
-**Built for Government of Grenada**
+**Version**: 0.1.0
+**Last Updated**: November 2025
+**Status**: Active Development
