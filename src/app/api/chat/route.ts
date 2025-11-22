@@ -134,7 +134,7 @@ User's question: ${input}`;
                     body: JSON.stringify({
                       query: args.query,
                       max_results: args.max_results || 3,
-                      include_domains: args.include_domains || ["ey.com"]
+                      include_domains: args.include_domains || []
                     })
                   });
 
@@ -149,9 +149,15 @@ User's question: ${input}`;
                   
                   // Format results for OpenAI
                   const formattedResults = {
-                    results: searchData.results || [],
-                    answer: searchData.answer || null,
-                    query: args.query
+                    summary: searchData.answer || "No summary available",
+                    sources: searchData.results?.map((r: { title: string; url: string; content: string }, i: number) => ({
+                      index: i + 1,
+                      title: r.title,
+                      url: r.url,
+                      snippet: r.content?.substring(0, 300) + "..."
+                    })) || [],
+                    query: args.query,
+                    source_count: searchData.results?.length || 0
                   };
                   
                   return {

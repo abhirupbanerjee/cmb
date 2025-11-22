@@ -1,9 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import { AxiosError } from "axios";
 
+interface TavilySearchResult {
+  title: string;
+  url: string;
+  content: string;
+  score: number;
+}
+
+interface TavilyResponse {
+  results: TavilySearchResult[];
+  answer: string | null;
+}
+
 export async function POST(req: NextRequest) {
   try {
-    const { query, max_results = 3, include_domains = ["ey.com"] } = await req.json();
+    const { query, max_results = 3, include_domains = [] } = await req.json();
 
     if (!query) {
       return NextResponse.json({ error: "Query required" }, { status: 400 });
@@ -14,20 +26,34 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Tavily API key missing" }, { status: 500 });
     }
 
-    console.log(`🔍 Tavily search: "${query}" (max: ${max_results}, domains: ${include_domains.join(", ")})`);
+    const domainInfo = include_domains.length > 0 ? include_domains.join(", ") : "all domains";
+    console.log(`🔍 Tavily search: "${query}" (max: ${max_results}, domains: ${domainInfo})`);
 
     // Match Tavily's actual API format
+    const tavilyRequest: {
+      api_key: string;
+      query: string;
+      max_results: number;
+      include_answer: boolean;
+      include_raw_content: boolean;
+      include_domains?: string[];
+    } = {
+      api_key: TAVILY_API_KEY,
+      query,
+      max_results,
+      include_answer: true,
+      include_raw_content: false
+    };
+
+    // Only add include_domains if array has values
+    if (include_domains && include_domains.length > 0) {
+      tavilyRequest.include_domains = include_domains;
+    }
+
     const response = await fetch("https://api.tavily.com/search", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        api_key: TAVILY_API_KEY,
-        query,
-        max_results,
-        include_answer: true,
-        include_raw_content: false,
-        include_domains
-      })
+      body: JSON.stringify(tavilyRequest)
     });
 
     if (!response.ok) {
@@ -36,7 +62,7 @@ export async function POST(req: NextRequest) {
       throw new Error(`Tavily API error: ${response.status}`);
     }
 
-    const data = await response.json();
+    const data: TavilyResponse = await response.json();
     
     console.log(`✅ Tavily returned ${data.results?.length || 0} results`);
     
